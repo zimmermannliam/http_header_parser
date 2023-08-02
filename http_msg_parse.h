@@ -27,5 +27,18 @@
 #define EVIL_NEWLINES 1
 
 int http_msg_get_hdr_field_val(char *msg_str, const char *field_name, char *buf, size_t buf_len);
+int http_msg_get_method(char *msg_str);
+
+enum // Order based on RFC2616
+{
+    HTTP_METHOD_OPTIONS     = 2,
+    HTTP_METHOD_GET         = 3,
+    HTTP_METHOD_HEAD        = 4,
+    HTTP_METHOD_POST        = 5,
+    HTTP_METHOD_PUT         = 6,
+    HTTP_METHOD_DELETE      = 7,
+    HTTP_METHOD_TRACE       = 8,
+    HTTP_METHOD_CONNECT     = 9
+};
 
 #endif

@@ -27,6 +27,6 @@ int main(int argc, char **argv)
     char buf[1024];
     int r = http_msg_get_hdr_field_val(str, (argc > 1)? argv[1] : "Host", buf, 1024);
     printf("%s\n", (r > 0)? buf : "Failed");
-
+    printf("Method #: %d\n", http_msg_get_method(str));
     return 0;
 }

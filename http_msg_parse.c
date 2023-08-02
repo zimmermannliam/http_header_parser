@@ -125,3 +125,27 @@ int http_msg_get_hdr_field_val(char *msg_str, const char *field_name, char *buf,
     strlncpy(buf, field_value, buf_len);
     return strlnlen(field_value);
 }
+
+int http_msg_get_method(char *msg_str)
+{
+    char *msg_ptr;
+    
+    // Gobble newlines
+    for (msg_ptr = msg_str; (*msg_ptr == '\r') || (*msg_ptr == '\n'); ++msg_ptr); // Do nothing
+
+    if (strncmp(msg_ptr, "OPTIONS", strlen("OPTIONS")))
+        return HTTP_METHOD_OPTIONS;
+    else if (strncmp(msg_ptr, "GET", strlen("GET")))
+        return HTTP_METHOD_GET;
+    else if (strncmp(msg_ptr, "POST", strlen("POST")))
+        return HTTP_METHOD_POST;
+    else if (strncmp(msg_ptr, "PUT", strlen("PUT")))
+        return HTTP_METHOD_PUT;
+    else if (strncmp(msg_ptr, "DELETE", strlen("DELETE")))
+        return HTTP_METHOD_DELETE;
+    else if (strncmp(msg_ptr, "TRACE", strlen("TRACE")))
+        return HTTP_METHOD_TRACE;
+    else if (strncmp(msg_ptr, "CONNECT", strlen("CONNECT")))
+        return HTTP_METHOD_CONNECT;
+    return -1;
+}
