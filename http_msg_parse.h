@@ -1,4 +1,4 @@
-/* HTTP Header Parse API */
+/* HTTP Parse API */
 
 /* Copyright (c) 2023 Liam Zimmermann
  * 
@@ -26,6 +26,6 @@
 
 #define EVIL_NEWLINES 1
 
-int http_header_get_field(char *req_str, const char *field_name, char *buf, size_t buf_len);
+int http_msg_get_hdr_field_val(char *msg_str, const char *field_name, char *buf, size_t buf_len);
 
 #endif

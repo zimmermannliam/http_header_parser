@@ -1,4 +1,4 @@
-/* HTTP Header Parse source code */
+/* HTTP Message Parse source code */
 
 /* Copyright (c) 2023 Liam Zimmermann
  * 
@@ -22,7 +22,7 @@
  */
 
 #include <string.h>
-#include "http_header_parse.h"
+#include "http_msg_parse.h"
 
 static int WSP(char *s)
 {
@@ -89,7 +89,7 @@ static size_t strlnlen(char *str)
     return i;
 }
 
-int http_header_get_field(char *hdr_str, const char *field_name, char *buf, size_t buf_len)
+int http_msg_get_hdr_field_val(char *msg_str, const char *field_name, char *buf, size_t buf_len)
 /* Get a field_value in hdr_str by field_name. And put it in buf, up to a
  * maximum of buf_len. Return -1 if not found, -2 if invalid formatting, or the
  * length of the field otherwise. Note that if the field is longer than the
@@ -99,9 +99,9 @@ int http_header_get_field(char *hdr_str, const char *field_name, char *buf, size
     char *field_value;
 
     // Grab the line with the key
-    while ((key_line = strstr(hdr_str, field_name)))
+    while ((key_line = strstr(msg_str, field_name)))
     {
-        if (is_new_line(key_line, hdr_str))
+        if (is_new_line(key_line, msg_str))
             break;
         else
             key_line += 1; // Don't re-match self

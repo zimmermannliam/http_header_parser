@@ -1,7 +1,7 @@
 CC=gcc
 
-test: http_header_parse_test
-	./http_header_parse_test $(arg)
+test: http_msg_parse_test
+	./http_msg_parse_test $(arg)
 
-http_header_parse_test: http_header_parse.c test.c
-	$(CC) http_header_parse.c test.c -o http_header_parse_test -Wall
+http_msg_parse_test: http_msg_parse.c test.c
+	$(CC) http_msg_parse.c test.c -o http_msg_parse_test -Wall
