@@ -24,12 +24,12 @@
 #include <string.h>
 #include "http_header_parse.h"
 
-int WSP(char *s)
+static int WSP(char *s)
 {
     return (s[0] == ' ') || (s[0] == '\t') ? 1 : 0;
 }
 
-int CRLF(char *s)
+static int CRLF(char *s)
 {
     if (s[0] == '\r' && s[1] == '\n')
         return 2;
@@ -40,7 +40,7 @@ int CRLF(char *s)
     return 0;
 }
 
-int CRLF_WSP(char *s)
+static int CRLF_WSP(char *s)
 {
     if ((CRLF(s) > 0) && WSP(s + CRLF(s)))
         return CRLF(s) + WSP(s + CRLF(s));
@@ -50,7 +50,7 @@ int CRLF_WSP(char *s)
 }
 
 
-void gobble_LWS(char **s)
+static void gobble_LWS(char **s)
 {
     for (;;)
     {
@@ -62,14 +62,14 @@ void gobble_LWS(char **s)
     }
 }
 
-int is_new_line(char *substr, char *original_str)
+static int is_new_line(char *substr, char *original_str)
 /* True if the substring is the beginning of the original or if it has a newline before it */
 {
     return ((substr == original_str) 
     || ((substr > original_str) && (*(substr - 1) == '\n')));
 }
 
-size_t strlncpy(char *dest, char *src, size_t max)
+static size_t strlncpy(char *dest, char *src, size_t max)
 /* Copy a line up to 'max', return amount copied */
 {
     size_t i;
@@ -81,13 +81,25 @@ size_t strlncpy(char *dest, char *src, size_t max)
     return i;
 }
 
-int http_header_get(char *hdr_str, const char *name, char *buf, size_t buf_len)
+static size_t strlnlen(char *str)
+/* Return the length of the string or the line */
+{
+    int i;
+    for (i = 0; (str[i] != '\0') && (str[i] != '\n') && (str[i] != '\r'); ++i); // Do nothing
+    return i;
+}
+
+int http_header_get_field(char *hdr_str, const char *field_name, char *buf, size_t buf_len)
+/* Get a field_value in hdr_str by field_name. And put it in buf, up to a
+ * maximum of buf_len. Return -1 if not found, -2 if invalid formatting, or the
+ * length of the field otherwise. Note that if the field is longer than the
+ * buf_len that can be checked by comparing the return value to buf_len. */
 {
     char *key_line;
-    char *field;
+    char *field_value;
 
     // Grab the line with the key
-    while ((key_line = strstr(hdr_str, name)))
+    while ((key_line = strstr(hdr_str, field_name)))
     {
         if (is_new_line(key_line, hdr_str))
             break;
@@ -100,15 +112,16 @@ int http_header_get(char *hdr_str, const char *name, char *buf, size_t buf_len)
         return -1;
     
     // Go to after ': <LWS>'
-    field = strchr(key_line, ':');
+    field_value = strchr(key_line, ':');
 
     // This shouldn't happen with good formatting, invalid
-    if (!field)
+    if (!field_value)
         return -2;
     
     // Get rid of colon and spaces
-    ++field;
-    gobble_LWS(&field);
+    ++field_value;
+    gobble_LWS(&field_value);
 
-    return strlncpy(buf, field, buf_len);
+    strlncpy(buf, field_value, buf_len);
+    return strlnlen(field_value);
 }

@@ -26,6 +26,6 @@
 
 #define EVIL_NEWLINES 1
 
-int http_header_get(char *req_str, const char *name, char *buf, size_t buf_len);
+int http_header_get_field(char *req_str, const char *field_name, char *buf, size_t buf_len);
 
 #endif
